@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import _ from "lodash";
 import { ScaleLoader } from "react-spinners";
 
 import "./App.scss";
@@ -70,10 +69,10 @@ class App extends Component {
       return (
         <div className="loader">
           <ScaleLoader
-            height="40"
-            width="10"
-            margin="6px"
-            radius="5"
+            height={40}
+            width={10}
+            margin={"6px"}
+            radius={5}
             color={"#357C6D"}
             loading={showLoader}
           />

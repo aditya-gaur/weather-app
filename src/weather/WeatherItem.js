@@ -4,7 +4,7 @@ import Moment from "moment";
 import iconInfo from "../utils/iconInfo";
 
 export default class WeatherItem extends Component {
-  renderDayName = () => {
+  renderDayName = timestamp => {
     const days = {
       sameDay: "[Today]",
       nextDay: "ddd",
@@ -15,7 +15,7 @@ export default class WeatherItem extends Component {
 
     return (
       <p className="timestamp">
-        {Moment(this.props.data.dayWeather.dt * 1000).calendar(null, days)}
+        {Moment(timestamp * 1000).calendar(null, days)}
       </p>
     );
   };
@@ -27,7 +27,6 @@ export default class WeatherItem extends Component {
     const { max: temperature } = temp;
     const {
       description: weatherType,
-      main: weatherDescription,
       id: icon
     } = weather[0];
 
@@ -42,7 +41,7 @@ export default class WeatherItem extends Component {
           icon={iconInfo(icon).icon}
           style={{ height: "auto" }}
         />
-        {this.renderDayName()}
+        {this.renderDayName(timestamp)}
         <div className="temperature-info">
           <p className="temperature">
             {temperature}
