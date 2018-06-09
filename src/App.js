@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import _ from "lodash";
-import randomColor from "randomcolor";
+import { ScaleLoader } from "react-spinners";
 
 import "./App.scss";
 import WeatherCard from "./weather/WeatherCard";
@@ -14,7 +14,8 @@ class App extends Component {
     this.state = {
       city: "Indore",
       searchedCity: "Indore",
-      weekWeather: []
+      weekWeather: [],
+      showLoader: true
     };
   }
 
@@ -23,7 +24,8 @@ class App extends Component {
   }
 
   getWeather = async (searchedCity = this.state.city) => {
-    let weather = [];
+    let weather = [],
+      showLoader = true;
     await fetchWeather(searchedCity)
       .then(response => {
         weather = response.list.map(dayWeather => {
@@ -33,15 +35,20 @@ class App extends Component {
             city: response.city.name
           };
         });
+        showLoader = false;
       })
-      .catch(error => console.log("error", error));
+      .catch(error => {
+        showLoader = false;
+        console.log("error", error);
+      });
 
     const { color } = iconInfo(weather[0].dayWeather.weather[0].id);
     this.setState({
       weekWeather: weather,
       city: searchedCity,
       searchedCity,
-      color
+      color,
+      showLoader
     });
   };
 
@@ -57,6 +64,25 @@ class App extends Component {
   };
 
   render() {
+    const { weekWeather, color, searchedCity, showLoader } = this.state;
+
+    if (weekWeather.length === 0 && showLoader) {
+      return (
+        <div className="loader">
+          <ScaleLoader
+            height="40"
+            width="10"
+            margin="6px"
+            radius="5"
+            color={"#357C6D"}
+            loading={showLoader}
+          />
+        </div>
+      );
+    } else if (weekWeather.length === 0 && !showLoader) {
+      return <div>No weather data</div>;
+    }
+
     const InputForm = () => (
       <form onSubmit={e => this.handleSubmit(e)}>
         <fieldset>
@@ -65,25 +91,15 @@ class App extends Component {
             className="form-input"
             type="text"
             ref={this.city}
-            defaultValue={this.state.searchedCity}
+            defaultValue={searchedCity}
           />
         </fieldset>
       </form>
     );
 
     return (
-      <div
-        className="weather-container"
-        style={{ backgroundColor: this.state.color }}
-      >
-        {_.isEmpty(this.state.weekWeather) ? (
-          "no data"
-        ) : (
-          <WeatherCard
-            color={this.state.color}
-            weekWeather={this.state.weekWeather}
-          />
-        )}
+      <div className="weather-container" style={{ backgroundColor: color }}>
+        <WeatherCard color={color} weekWeather={weekWeather} />
         <InputForm />
       </div>
     );

@@ -6,6 +6,10 @@ $border_color_1: #fff;
 
 body {
 	font-family: $font_family_1;
+	.loader {
+		text-align: center;
+		margin-top: 20px;
+	}
 	fieldset {
 		border-color: $border_color_1;
 		padding: 10px 20px;
